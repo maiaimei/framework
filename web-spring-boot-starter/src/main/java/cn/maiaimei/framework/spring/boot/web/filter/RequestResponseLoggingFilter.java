@@ -36,9 +36,9 @@ public class RequestResponseLoggingFilter extends HttpFilter {
             return;
         }
 
-        RepeatableHttpServletRequestWrapper requestWrapper = new RepeatableHttpServletRequestWrapper(request);
+        CustomHttpServletRequest requestWrapper = new CustomHttpServletRequest(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
-        RequestResponseDetail rrd = HttpUtils.getRequestDetail(requestWrapper);
+        RequestResponseDetail rrd = HttpUtils.getRequestDetail(requestWrapper, includeHeaderNames);
         long start = 0, end = 0;
 
         try {
@@ -79,6 +79,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
     private boolean includeRequestBody = true;
     private boolean includeResponseBody = false;
     private List<String> excludeUris;
+    private List<String> includeHeaderNames;
 
     public void setIncludeRemoteHost(boolean includeRemoteHost) {
         this.includeRemoteHost = includeRemoteHost;
@@ -118,6 +119,10 @@ public class RequestResponseLoggingFilter extends HttpFilter {
 
     public void setExcludeUris(List<String> excludeUris) {
         this.excludeUris = excludeUris;
+    }
+
+    public void setIncludeHeaderNames(List<String> includeHeaderNames) {
+        this.includeHeaderNames = includeHeaderNames;
     }
 
     private boolean checkUri(HttpServletRequest request) {

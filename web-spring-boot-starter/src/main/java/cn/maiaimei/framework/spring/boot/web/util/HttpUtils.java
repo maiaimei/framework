@@ -1,6 +1,6 @@
 package cn.maiaimei.framework.spring.boot.web.util;
 
-import cn.maiaimei.framework.spring.boot.web.filter.RepeatableHttpServletRequestWrapper;
+import cn.maiaimei.framework.spring.boot.web.filter.CustomHttpServletRequest;
 import cn.maiaimei.framework.spring.boot.web.filter.RequestResponseDetail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -18,19 +18,20 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class HttpUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @SneakyThrows
-    public static RequestResponseDetail getRequestDetail(HttpServletRequest request) {
+    public static RequestResponseDetail getRequestDetail(HttpServletRequest request, List<String> includeHeaderNames) {
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
 
         String requestId = UUID.randomUUID().toString().replaceAll("-", "");
         String requestMethod = request.getMethod();
         String requestUri = request.getRequestURI();
-        String requestHeaders = getRequestHeaders(request);
+        String requestHeaders = getRequestHeaders(request, includeHeaderNames);
         String requestParams = StringUtils.defaultIfBlank(request.getQueryString(), StringUtils.EMPTY);
         String requestBody = getRequestBody(request);
         String remoteHost = request.getRemoteHost();
@@ -74,12 +75,14 @@ public class HttpUtils {
     }
 
     @SneakyThrows
-    public static String getRequestHeaders(HttpServletRequest request) {
+    public static String getRequestHeaders(HttpServletRequest request, List<String> includeHeaderNames) {
         HashMap<String, String> map = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
-            map.put(name, request.getHeader(name));
+            if (includeHeaderNames != null && includeHeaderNames.contains(name)) {
+                map.put(name, request.getHeader(name));
+            }
         }
         if (map.size() == 0) {
             return StringUtils.EMPTY;
@@ -92,8 +95,8 @@ public class HttpUtils {
         if (request instanceof ContentCachingRequestWrapper) {
             requestBody = new String(((ContentCachingRequestWrapper) request).getContentAsByteArray(), StandardCharsets.UTF_8);
         }
-        if (request instanceof RepeatableHttpServletRequestWrapper) {
-            requestBody = ((RepeatableHttpServletRequestWrapper) request).getPayload();
+        if (request instanceof CustomHttpServletRequest) {
+            requestBody = ((CustomHttpServletRequest) request).getPayload();
         }
         return requestBody;
     }
