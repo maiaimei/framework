@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Object handleHttpMessageNotReadableException(HttpServletRequest request, HandlerMethod handlerMethod, HttpMessageNotReadableException e) {
-        String message = "请求体不能为空";
+        String message = StringUtils.defaultIfBlank(e.getMessage(), "请求体不能为空");
         return handleError(HttpStatus.BAD_REQUEST, message, request, handlerMethod, e);
     }
 
