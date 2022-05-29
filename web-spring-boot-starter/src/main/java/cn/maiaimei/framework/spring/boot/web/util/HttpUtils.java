@@ -119,4 +119,29 @@ public class HttpUtils {
         return (accept != null && accept.contains("application/json"))
                 || (contentType != null && contentType.contains("application/json"));
     }
+
+    public static String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Real-IP");
+        if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeader("X-Forwarded-For");
+        if (ip != null && !"".equals(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                // 只获取第一个值
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        } else {
+            // 取不到真实ip则返回空，不能返回内网地址。
+            return "";
+        }
+    }
+
+    private static String getUserAgent(HttpServletRequest request) {
+        return request.getHeader("user-agent");
+    }
+
 }
