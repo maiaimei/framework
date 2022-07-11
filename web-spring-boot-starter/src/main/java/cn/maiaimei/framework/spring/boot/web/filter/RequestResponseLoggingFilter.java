@@ -64,7 +64,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
             // 这一步很重要，把缓存的响应内容，输出到客户端
             responseWrapper.copyBodyToResponse();
         } finally {
-            log.info("{}, completed request in {} ms", new Builder(this).build(rrd), end - start);
+            log.info("\n{}\ncompleted request in {} ms", new Builder(this).build(rrd), end - start);
             clearMDC();
         }
     }
@@ -187,63 +187,63 @@ public class RequestResponseLoggingFilter extends HttpFilter {
 
         private Builder remoteHost(String remoteHost) {
             if (loggingFilter.includeRemoteHost) {
-                logs.add(String.format("RemoteHost: %s", remoteHost));
+                logs.add(String.format("%10s: %s", "IP", remoteHost));
             }
             return this;
         }
 
         private Builder device(String device) {
             if (loggingFilter.includeDevice) {
-                logs.add(String.format("Device: %s", device));
+                logs.add(String.format("%10s: %s", "Device", device));
             }
             return this;
         }
 
         private Builder os(String os) {
             if (loggingFilter.includeOs) {
-                logs.add(String.format("OS: %s", os));
+                logs.add(String.format("%10s: %s", "OS", os));
             }
             return this;
         }
 
         private Builder requestMethod(String requestMethod) {
             if (loggingFilter.includeRequestMethod) {
-                logs.add(String.format("RequestMethod: %s", requestMethod));
+                logs.add(String.format("%10s: %s", "Method", requestMethod));
             }
             return this;
         }
 
         private Builder requestUri(String requestUri) {
             if (loggingFilter.includeRequestUri) {
-                logs.add(String.format("RequestUri: %s", requestUri));
+                logs.add(String.format("%10s: %s", "Uri", requestUri));
             }
             return this;
         }
 
         private Builder requestHeaders(String requestHeaders) {
-            if (loggingFilter.includeRequestHeaders) {
-                logs.add(String.format("RequestHeaders: %s", requestHeaders));
+            if (loggingFilter.includeRequestHeaders && StringUtils.hasText(requestHeaders)) {
+                logs.add(String.format("%10s: %s", "Headers", requestHeaders));
             }
             return this;
         }
 
         private Builder requestParams(String requestParams) {
-            if (loggingFilter.includeRequestParams) {
-                logs.add(String.format("RequestParams: %s", requestParams));
+            if (loggingFilter.includeRequestParams && StringUtils.hasText(requestParams)) {
+                logs.add(String.format("%10s: %s", "Params", requestParams));
             }
             return this;
         }
 
         private Builder requestBody(String requestBody) {
-            if (loggingFilter.includeRequestBody) {
-                logs.add(String.format("RequestBody: %s", requestBody));
+            if (loggingFilter.includeRequestBody && StringUtils.hasText(requestBody)) {
+                logs.add(String.format("%10s: %s", "Payload", requestBody));
             }
             return this;
         }
 
         private Builder responseBody(String responseBody) {
-            if (loggingFilter.includeResponseBody) {
-                logs.add(String.format("ResponseBody: %s", responseBody));
+            if (loggingFilter.includeResponseBody && StringUtils.hasText(responseBody)) {
+                logs.add(String.format("%10s: %s", "Response", responseBody));
             }
             return this;
         }
@@ -262,7 +262,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
                     .requestParams(detail.getRequestParams())
                     .requestBody(detail.getRequestBody())
                     .responseBody(detail.getResponseBody());
-            return String.join(", ", logs);
+            return String.join("\n\t", logs);
         }
     }
 
