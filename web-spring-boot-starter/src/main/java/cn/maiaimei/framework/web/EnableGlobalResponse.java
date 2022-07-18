@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.spring.boot.web;
+package cn.maiaimei.framework.web;
 
 import org.springframework.context.annotation.Import;
 

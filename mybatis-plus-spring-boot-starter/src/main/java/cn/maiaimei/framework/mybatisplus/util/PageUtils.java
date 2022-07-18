@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.mybatis.plus.util;
+package cn.maiaimei.framework.mybatisplus.util;
 
 import cn.maiaimei.framework.beans.PagingResult;
 import cn.maiaimei.framework.util.BeanUtils;

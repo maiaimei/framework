@@ -1,10 +1,10 @@
-package cn.maiaimei.framework.spring.boot.web;
+package cn.maiaimei.framework.web;
 
-import cn.maiaimei.framework.beans.ErrorMap;
 import cn.maiaimei.framework.beans.Result;
 import cn.maiaimei.framework.beans.ResultUtils;
 import cn.maiaimei.framework.exception.TooManyAnnotationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.maiaimei.framework.util.JsonUtils;
+import cn.maiaimei.framework.util.MDCUtils;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,13 +22,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * 接口返回值统一处理
+ */
 @ControllerAdvice
 public class GlobalResponseHandler implements ApplicationContextAware, InitializingBean, ResponseBodyAdvice<Object> {
     private String[] basePackages;
 
     private ApplicationContext applicationContext;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -67,23 +68,24 @@ public class GlobalResponseHandler implements ApplicationContextAware, Initializ
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        // 下载文件
         if (selectedContentType.includes(MediaType.APPLICATION_OCTET_STREAM)) {
             return body;
         }
         if (body == null) {
-            return ResultUtils.success();
+            return getResult(ResultUtils.success());
         }
         if (body instanceof String) {
-            return objectMapper.writeValueAsString(ResultUtils.success(body));
+            return JsonUtils.stringify(getResult(ResultUtils.success(body)));
         }
         if (body instanceof Result) {
-            return body;
+            return getResult((Result) body);
         }
-        // 全局异常处理
-        if (body instanceof ErrorMap) {
-            return body;
-        }
-        return ResultUtils.success(body);
+        return getResult(ResultUtils.success(body));
+    }
+
+    private Result getResult(Result result) {
+        String requestId = MDCUtils.getTraceId();
+        result.setTraceId(requestId);
+        return result;
     }
 }

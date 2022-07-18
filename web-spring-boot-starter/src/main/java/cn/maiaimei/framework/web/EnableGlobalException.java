@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.spring.boot.web;
+package cn.maiaimei.framework.web;
 
 import org.springframework.context.annotation.Import;
 
@@ -13,10 +13,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-        GlobalErrorConfig.class,
+        // GlobalErrorConfig.class,
         GlobalErrorController.class,
         GlobalExceptionHandler.class
 })
 public @interface EnableGlobalException {
-    boolean isShowTrace() default false;
+    // boolean isShowTrace() default false;
 }

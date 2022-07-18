@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Result<T> {
-    private Integer code;
+    private String code;
     private String message;
     private T data;
+    private String traceId;
 }

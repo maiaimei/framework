@@ -10,12 +10,12 @@ public enum ResultStatus {
     private final int value;
     private final String message;
 
-    ResultStatus(int value, String message) {
+    ResultStatus(Integer value, String message) {
         this.value = value;
         this.message = message;
     }
 
-    public int value() {
+    public Integer value() {
         return this.value;
     }
 

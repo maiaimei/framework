@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.spring.boot.web.filter;
+package cn.maiaimei.framework.web.http;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,17 +14,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RequestResponseDetail {
     /**
-     * 请求标识
+     * 请求地址
      */
-    private String requestId;
+    private String requestUri;
     /**
      * 请求方法
      */
     private String requestMethod;
-    /**
-     * 请求地址（不含请求参数）
-     */
-    private String requestUri;
     /**
      * 请求头
      */
@@ -38,23 +34,27 @@ public class RequestResponseDetail {
      */
     private String requestBody;
     /**
-     * 响应体
-     */
-    private String responseBody;
-    /**
      * 状态码
      */
     private String responseStatus;
     /**
-     * 客户端远程主机
+     * 响应体
      */
-    private String remoteHost;
+    private String responseBody;
     /**
-     * 客户端设备类型
+     * 客户端IP
      */
-    private String device;
+    private String clientIP;
     /**
-     * 客户端操作系统
+     * 客户端设备
      */
-    private String os;
+    private String clientDevice;
+    /**
+     * 客户端系统
+     */
+    private String clientOS;
+    /**
+     * 用户代理
+     */
+    private String userAgent;
 }

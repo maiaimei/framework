@@ -1,7 +1,7 @@
-package cn.maiaimei.framework.spring.boot.web.util;
+package cn.maiaimei.framework.web.util;
 
-import cn.maiaimei.framework.spring.boot.web.filter.CustomHttpServletRequest;
-import cn.maiaimei.framework.spring.boot.web.filter.RequestResponseDetail;
+import cn.maiaimei.framework.web.http.CustomRequestWrapper;
+import cn.maiaimei.framework.web.http.RequestResponseDetail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.SneakyThrows;
@@ -19,35 +19,34 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class HttpUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @SneakyThrows
-    public static RequestResponseDetail getRequestDetail(HttpServletRequest request, List<String> includeHeaderNames) {
-        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
+    public static RequestResponseDetail getRequestResponseDetail(HttpServletRequest request, List<String> includeHeaderNames) {
+        String userAgentAsString = request.getHeader("user-agent");
+        UserAgent userAgent = UserAgent.parseUserAgentString(userAgentAsString);
 
-        String requestId = UUID.randomUUID().toString().replaceAll("-", "");
-        String requestMethod = request.getMethod();
         String requestUri = request.getRequestURI();
+        String requestMethod = request.getMethod();
         String requestHeaders = getRequestHeaders(request, includeHeaderNames);
         String requestParams = StringUtils.defaultIfBlank(request.getQueryString(), StringUtils.EMPTY);
         String requestBody = getRequestBody(request);
-        String remoteHost = request.getRemoteHost();
-        String device = userAgent.getOperatingSystem().getDeviceType().getName();
-        String os = userAgent.getOperatingSystem().getName();
+        String clientIP = request.getRemoteHost();
+        String clientDevice = userAgent.getOperatingSystem().getDeviceType().getName();
+        String clientOS = userAgent.getOperatingSystem().getName();
 
         RequestResponseDetail detail = RequestResponseDetail.builder()
-                .requestId(requestId)
                 .requestMethod(requestMethod)
                 .requestUri(requestUri)
                 .requestHeaders(requestHeaders)
                 .requestParams(requestParams)
                 .requestBody(requestBody)
-                .remoteHost(remoteHost)
-                .device(device)
-                .os(os)
+                .userAgent(userAgentAsString)
+                .clientIP(clientIP)
+                .clientDevice(clientDevice)
+                .clientOS(clientOS)
                 .build();
         return detail;
     }
@@ -95,8 +94,8 @@ public class HttpUtils {
         if (request instanceof ContentCachingRequestWrapper) {
             requestBody = new String(((ContentCachingRequestWrapper) request).getContentAsByteArray(), StandardCharsets.UTF_8);
         }
-        if (request instanceof CustomHttpServletRequest) {
-            requestBody = ((CustomHttpServletRequest) request).getPayload();
+        if (request instanceof CustomRequestWrapper) {
+            requestBody = ((CustomRequestWrapper) request).getPayload();
         }
         return requestBody;
     }

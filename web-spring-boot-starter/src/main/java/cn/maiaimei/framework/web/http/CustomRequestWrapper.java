@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.spring.boot.web.filter;
+package cn.maiaimei.framework.web.http;
 
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class CustomHttpServletRequest extends HttpServletRequestWrapper {
+public class CustomRequestWrapper extends HttpServletRequestWrapper {
     private Map<String, String> headers = new HashMap<>();
     private final byte[] bytes;
 
-    public CustomHttpServletRequest(HttpServletRequest request) throws IOException {
+    public CustomRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         bytes = IOUtils.toByteArray(request.getInputStream());
     }

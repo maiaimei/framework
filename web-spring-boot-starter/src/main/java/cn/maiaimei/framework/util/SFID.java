@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.spring.boot.beans;
+package cn.maiaimei.framework.util;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;

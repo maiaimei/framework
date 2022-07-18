@@ -1,11 +1,10 @@
-package cn.maiaimei.framework.spring.boot.web;
+package cn.maiaimei.framework.web;
 
-import cn.maiaimei.framework.beans.ErrorMap;
-import cn.maiaimei.framework.spring.boot.util.MDCUtils;
-import cn.maiaimei.framework.spring.boot.web.util.ErrorUtils;
+import cn.maiaimei.framework.util.MDCUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -17,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -27,12 +27,8 @@ import java.util.Map;
 @Slf4j
 @Controller
 public class GlobalErrorController extends BasicErrorController {
-    private GlobalErrorConfig globalErrorConfig;
-
-    @Autowired
-    public void setGlobalErrorConfig(GlobalErrorConfig globalErrorConfig) {
-        this.globalErrorConfig = globalErrorConfig;
-    }
+    @Value("${global-config.response.show-trace:false}")
+    private boolean showTrace;
 
     @Autowired
     public GlobalErrorController(ServerProperties errorAttributes) {
@@ -43,7 +39,7 @@ public class GlobalErrorController extends BasicErrorController {
     public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
         HttpStatus status = getStatus(request);
         response.setStatus(status.value());
-        Map<String, Object> model = getErrorAttributes(status, request, MediaType.TEXT_HTML);
+        Map<String, Object> model = getErrorModel(status, request, MediaType.TEXT_HTML);
         ModelAndView modelAndView = resolveErrorView(request, response, status, model);
         return (modelAndView != null) ? modelAndView : new ModelAndView("error", model);
     }
@@ -54,26 +50,23 @@ public class GlobalErrorController extends BasicErrorController {
         if (status == HttpStatus.NO_CONTENT) {
             return new ResponseEntity<>(status);
         }
-        ErrorMap body = getErrorAttributes(status, request, MediaType.ALL);
+        Map<String, Object> body = getErrorModel(status, request, MediaType.ALL);
         return new ResponseEntity<>(body, status);
     }
 
-    private ErrorMap getErrorAttributes(HttpStatus status,
-                                        HttpServletRequest request,
-                                        MediaType mediaType) {
+    private Map<String, Object> getErrorModel(HttpStatus status,
+                                              HttpServletRequest request,
+                                              MediaType mediaType) {
         Map<String, Object> errorAttributes = getErrorAttributes(request, getErrorAttributeOptions(request, mediaType));
-        String traceId = MDCUtils.getRequestId();
-        Object code = status.value();
-        Object message = errorAttributes.get("message");
         Object trace = errorAttributes.get("trace");
-        Object path = errorAttributes.get("path");
-        ErrorUtils.writeLog(code, message, trace, path);
-        return ErrorMap.builder()
-                .code(code)
-                .message(message)
-                .traceId(traceId)
-                .trace(globalErrorConfig.isShowTrace() ? trace : StringUtils.EMPTY)
-                .path(path)
-                .build();
+        log.error("{}", trace);
+
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("code", status.value());
+        model.put("message", errorAttributes.get("message"));
+        model.put("traceId", MDCUtils.getTraceId());
+        model.put("trace", showTrace ? trace : StringUtils.EMPTY);
+        model.put("path", errorAttributes.get("path"));
+        return model;
     }
 }

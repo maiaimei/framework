@@ -1,11 +1,13 @@
-package cn.maiaimei.framework.spring.boot.web;
+package cn.maiaimei.framework.web;
 
 import cn.maiaimei.framework.exception.BusinessException;
-import cn.maiaimei.framework.spring.boot.web.util.ErrorUtils;
+import cn.maiaimei.framework.util.MDCUtils;
+import cn.maiaimei.framework.web.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -17,10 +19,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 全局异常处理
@@ -30,13 +37,8 @@ import java.util.List;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    private GlobalErrorConfig globalErrorConfig;
-
-    @Autowired
-    public void setGlobalErrorConfig(GlobalErrorConfig globalErrorConfig) {
-        this.globalErrorConfig = globalErrorConfig;
-    }
+    @Value("${global-config.response.show-trace:false}")
+    private boolean showTrace;
 
     @ExceptionHandler(BusinessException.class)
     public Object handleBusinessException(HttpServletRequest request, HandlerMethod handlerMethod, BusinessException e) {
@@ -140,6 +142,29 @@ public class GlobalExceptionHandler {
     }
 
     private Object handleError(HttpStatus status, String message, HttpServletRequest request, HandlerMethod handlerMethod, Throwable error, Boolean isWriteLog) {
-        return ErrorUtils.handleError(status, message, request, handlerMethod, error, globalErrorConfig.isShowTrace(), isWriteLog);
+        Object trace = getTrace(error);
+        if (isWriteLog) {
+            log.error("{}", trace);
+        }
+
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("code", status.value());
+        model.put("message", message);
+        model.put("traceId", MDCUtils.getTraceId());
+        model.put("trace", showTrace ? trace : StringUtils.EMPTY);
+        model.put("path", HttpUtils.getRequestMethodAndUri(request));
+
+        if (HttpUtils.isAjaxRequest(request) || HttpUtils.isReturnJson(request, handlerMethod)) {
+            return new ResponseEntity<>(model, status);
+        } else {
+            return new ModelAndView("error", model, status);
+        }
+    }
+
+    private static String getTrace(Throwable error) {
+        StringWriter stackTrace = new StringWriter();
+        error.printStackTrace(new PrintWriter(stackTrace));
+        stackTrace.flush();
+        return stackTrace.toString();
     }
 }
