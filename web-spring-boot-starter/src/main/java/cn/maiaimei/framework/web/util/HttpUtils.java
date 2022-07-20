@@ -16,6 +16,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -24,13 +25,13 @@ public class HttpUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @SneakyThrows
-    public static RequestResponseDetail getRequestResponseDetail(HttpServletRequest request, List<String> includeHeaderNames) {
+    public static RequestResponseDetail getRequestResponseDetail(HttpServletRequest request, List<String> excludeHeaderNames) {
         String userAgentAsString = request.getHeader("user-agent");
         UserAgent userAgent = UserAgent.parseUserAgentString(userAgentAsString);
 
         String requestUri = request.getRequestURI();
         String requestMethod = request.getMethod();
-        String requestHeaders = getRequestHeaders(request, includeHeaderNames);
+        String requestHeaders = getRequestHeaders(request, excludeHeaderNames);
         String requestParams = StringUtils.defaultIfBlank(request.getQueryString(), StringUtils.EMPTY);
         String requestBody = getRequestBody(request);
         String clientIP = request.getRemoteHost();
@@ -74,12 +75,15 @@ public class HttpUtils {
     }
 
     @SneakyThrows
-    public static String getRequestHeaders(HttpServletRequest request, List<String> includeHeaderNames) {
+    public static String getRequestHeaders(HttpServletRequest request, List<String> excludeHeaderNames) {
+        if (excludeHeaderNames == null) {
+            excludeHeaderNames = new ArrayList<>();
+        }
         HashMap<String, String> map = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
-            if (includeHeaderNames != null && includeHeaderNames.contains(name)) {
+            if (!excludeHeaderNames.contains(name)) {
                 map.put(name, request.getHeader(name));
             }
         }

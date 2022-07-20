@@ -3,7 +3,7 @@ package cn.maiaimei.framework.web;
 import cn.maiaimei.framework.beans.Result;
 import cn.maiaimei.framework.beans.ResultUtils;
 import cn.maiaimei.framework.exception.TooManyAnnotationException;
-import cn.maiaimei.framework.util.JsonUtils;
+import cn.maiaimei.framework.util.JSON;
 import cn.maiaimei.framework.util.MDCUtils;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
@@ -75,7 +75,7 @@ public class GlobalResponseHandler implements ApplicationContextAware, Initializ
             return getResult(ResultUtils.success());
         }
         if (body instanceof String) {
-            return JsonUtils.stringify(getResult(ResultUtils.success(body)));
+            return JSON.stringify(getResult(ResultUtils.success(body)));
         }
         if (body instanceof Result) {
             return getResult((Result) body);

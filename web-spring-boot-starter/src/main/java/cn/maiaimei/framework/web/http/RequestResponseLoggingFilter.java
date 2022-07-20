@@ -38,7 +38,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
 
         CustomRequestWrapper requestWrapper = new CustomRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
-        RequestResponseDetail rrd = HttpUtils.getRequestResponseDetail(requestWrapper, includeHeaderNames);
+        RequestResponseDetail rrd = HttpUtils.getRequestResponseDetail(requestWrapper, excludeHeaderNames);
         long start = 0, end = 0;
 
         try {
@@ -67,13 +67,13 @@ public class RequestResponseLoggingFilter extends HttpFilter {
         } finally {
 
             LoggingList<String> list = new LoggingList<>();
-            list.add(formatLog("Uri", rrd.getRequestUri()));
-            list.add(formatLog("Method", rrd.getRequestMethod()));
-            list.add(formatLog("Headers", rrd.getRequestHeaders()));
-            list.add(formatLog("Params", rrd.getRequestParams()));
-            list.add(formatLog("Payload", rrd.getRequestBody()));
-            list.add(formatLog("Status", rrd.getResponseStatus()));
-            list.add(formatLog("Response", rrd.getResponseBody()));
+            list.add(formatLog("RequestUri", rrd.getRequestUri()));
+            list.add(formatLog("RequestMethod", rrd.getRequestMethod()));
+            list.add(formatLog("RequestHeaders", rrd.getRequestHeaders()));
+            list.add(formatLog("RequestParams", rrd.getRequestParams()));
+            list.add(formatLog("RequestBody", rrd.getRequestBody()));
+            list.add(formatLog("ResponseStatus", rrd.getResponseStatus()));
+            list.add(formatLog("ResponseBody", rrd.getResponseBody()));
             list.add(this.includeClientIP, formatLog("ClientIP", rrd.getClientIP()));
             list.add(this.includeClientDevice, formatLog("ClientDevice", rrd.getClientDevice()));
             list.add(this.includeClientOS, formatLog("ClientOS", rrd.getClientOS()));
@@ -89,7 +89,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
     private boolean includeClientIP = false;
     private boolean includeClientDevice = false;
     private boolean includeClientOS = false;
-    private List<String> includeHeaderNames;
+    private List<String> excludeHeaderNames;
     private List<String> excludeUris;
 
     public void setIncludeUserAgent(boolean includeUserAgent) {
@@ -108,8 +108,8 @@ public class RequestResponseLoggingFilter extends HttpFilter {
         this.includeClientOS = includeClientOS;
     }
 
-    public void setIncludeHeaderNames(List<String> includeHeaderNames) {
-        this.includeHeaderNames = includeHeaderNames;
+    public void setExcludeHeaderNames(List<String> excludeHeaderNames) {
+        this.excludeHeaderNames = excludeHeaderNames;
     }
 
     public void setExcludeUris(List<String> excludeUris) {
@@ -132,7 +132,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
     }
 
     private String formatLog(String key, String value) {
-        return String.format("%15s: %s", key, value);
+        return String.format("%-15s: %s", key, value);
     }
 
     static class LoggingList<E> extends ArrayList<E> {
