@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
 import java.io.InputStream;
@@ -45,27 +46,31 @@ public final class JSON {
 
     @SneakyThrows
     public static String readFileAsString(String path) {
-        InputStream inputStream = JSON.class.getResourceAsStream(path);
+        ClassPathResource classPathResource = new ClassPathResource(path);
+        InputStream inputStream = classPathResource.getInputStream();
         Assert.notNull(inputStream, "inputStream is null");
         return IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
     }
 
     @SneakyThrows
     public static <T> T readFileAsObject(String path, Class<T> clazz) {
-        InputStream inputStream = JSON.class.getResourceAsStream(path);
+        ClassPathResource classPathResource = new ClassPathResource(path);
+        InputStream inputStream = classPathResource.getInputStream();
         return objectMapper.readValue(inputStream, clazz);
     }
 
     @SneakyThrows
     public static <T> List<T> readFileAsList(String path, Class<T> clazz) {
-        InputStream inputStream = JSON.class.getResourceAsStream(path);
+        ClassPathResource classPathResource = new ClassPathResource(path);
+        InputStream inputStream = classPathResource.getInputStream();
         return objectMapper.readValue(inputStream, new TypeReference<List<T>>() {
         });
     }
 
     @SneakyThrows
     public static Map<String, Object> readFileAsMap(String path) {
-        InputStream inputStream = JSON.class.getResourceAsStream(path);
+        ClassPathResource classPathResource = new ClassPathResource(path);
+        InputStream inputStream = classPathResource.getInputStream();
         return objectMapper.readValue(inputStream, new TypeReference<HashMap<String, Object>>() {
         });
     }
