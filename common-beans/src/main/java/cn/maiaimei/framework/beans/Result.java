@@ -14,4 +14,6 @@ public class Result<T> {
     private String message;
     private T data;
     private String traceId;
+    private String trace;
+    private String path;
 }

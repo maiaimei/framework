@@ -1,11 +1,11 @@
 package cn.maiaimei.framework.web;
 
+import cn.maiaimei.framework.beans.Result;
 import cn.maiaimei.framework.exception.BusinessException;
 import cn.maiaimei.framework.util.MDCUtils;
-import cn.maiaimei.framework.web.util.HttpUtils;
+import cn.maiaimei.framework.web.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,6 +21,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
@@ -31,14 +32,12 @@ import java.util.Map;
 
 /**
  * 全局异常处理
- *
- * @author maiaimei
  */
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @Value("${global-config.response.show-trace:false}")
-    private boolean showTrace;
+    @Resource
+    private GlobalErrorProperties globalErrorProperties;
 
     @ExceptionHandler(BusinessException.class)
     public Object handleBusinessException(HttpServletRequest request, HandlerMethod handlerMethod, BusinessException e) {
@@ -142,21 +141,34 @@ public class GlobalExceptionHandler {
     }
 
     private Object handleError(HttpStatus status, String message, HttpServletRequest request, HandlerMethod handlerMethod, Throwable error, Boolean isWriteLog) {
-        Object trace = getTrace(error);
-        if (isWriteLog) {
+        int code = status.value();
+        String traceId = MDCUtils.getTraceId();
+        String trace = getTrace(error);
+        String path = HttpUtils.getRequestMethodAndUri(request);
+
+        if (isWriteLog && StringUtils.isNotBlank(trace)) {
             log.error("{}", trace);
         }
-
-        Map<String, Object> model = new LinkedHashMap<>();
-        model.put("code", status.value());
-        model.put("message", message);
-        model.put("traceId", MDCUtils.getTraceId());
-        model.put("trace", showTrace ? trace : StringUtils.EMPTY);
-        model.put("path", HttpUtils.getRequestMethodAndUri(request));
+        if (!globalErrorProperties.isShowTrace()) {
+            trace = StringUtils.EMPTY;
+        }
 
         if (HttpUtils.isAjaxRequest(request) || HttpUtils.isReturnJson(request, handlerMethod)) {
-            return new ResponseEntity<>(model, status);
+            Result<Object> result = Result.builder()
+                    .code(String.valueOf(code))
+                    .message(message)
+                    .traceId(traceId)
+                    .trace(trace)
+                    .path(path)
+                    .build();
+            return new ResponseEntity<>(result, status);
         } else {
+            Map<String, Object> model = new LinkedHashMap<>();
+            model.put("code", code);
+            model.put("message", message);
+            model.put("traceId", traceId);
+            model.put("trace", trace);
+            model.put("path", path);
             return new ModelAndView("error", model, status);
         }
     }

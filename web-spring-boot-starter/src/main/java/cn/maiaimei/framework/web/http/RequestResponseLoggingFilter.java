@@ -2,7 +2,6 @@ package cn.maiaimei.framework.web.http;
 
 import ch.qos.logback.classic.helpers.MDCInsertingServletFilter;
 import cn.maiaimei.framework.util.MDCUtils;
-import cn.maiaimei.framework.web.util.HttpUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -36,7 +35,7 @@ public class RequestResponseLoggingFilter extends HttpFilter {
             return;
         }
 
-        CustomRequestWrapper requestWrapper = new CustomRequestWrapper(request);
+        RequestWrapper requestWrapper = new RequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
         RequestResponseDetail rrd = HttpUtils.getRequestResponseDetail(requestWrapper, excludeHeaderNames);
         long start = 0, end = 0;

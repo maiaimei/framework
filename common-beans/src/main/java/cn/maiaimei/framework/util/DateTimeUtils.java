@@ -14,7 +14,7 @@ public class DateTimeUtils {
     public static final String HH_MM = "HH:mm";
 
     private DateTimeUtils() {
-
+        throw new UnsupportedOperationException();
     }
 
     public static LocalDate date2LocalDate(Date date) {

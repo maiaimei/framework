@@ -1,7 +1,5 @@
-package cn.maiaimei.framework.web.util;
+package cn.maiaimei.framework.web.http;
 
-import cn.maiaimei.framework.web.http.CustomRequestWrapper;
-import cn.maiaimei.framework.web.http.RequestResponseDetail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.SneakyThrows;
@@ -34,22 +32,21 @@ public class HttpUtils {
         String requestHeaders = getRequestHeaders(request, excludeHeaderNames);
         String requestParams = StringUtils.defaultIfBlank(request.getQueryString(), StringUtils.EMPTY);
         String requestBody = getRequestBody(request);
-        String clientIP = request.getRemoteHost();
+        String clientIp = request.getRemoteHost();
         String clientDevice = userAgent.getOperatingSystem().getDeviceType().getName();
-        String clientOS = userAgent.getOperatingSystem().getName();
+        String clientOs = userAgent.getOperatingSystem().getName();
 
-        RequestResponseDetail detail = RequestResponseDetail.builder()
+        return RequestResponseDetail.builder()
                 .requestMethod(requestMethod)
                 .requestUri(requestUri)
                 .requestHeaders(requestHeaders)
                 .requestParams(requestParams)
                 .requestBody(requestBody)
                 .userAgent(userAgentAsString)
-                .clientIP(clientIP)
+                .clientIP(clientIp)
                 .clientDevice(clientDevice)
-                .clientOS(clientOS)
+                .clientOS(clientOs)
                 .build();
-        return detail;
     }
 
     public static String getRequestMethodAndUri(HttpServletRequest request) {
@@ -98,8 +95,8 @@ public class HttpUtils {
         if (request instanceof ContentCachingRequestWrapper) {
             requestBody = new String(((ContentCachingRequestWrapper) request).getContentAsByteArray(), StandardCharsets.UTF_8);
         }
-        if (request instanceof CustomRequestWrapper) {
-            requestBody = ((CustomRequestWrapper) request).getPayload();
+        if (request instanceof RequestWrapper) {
+            requestBody = ((RequestWrapper) request).getPayload();
         }
         return requestBody;
     }

@@ -6,17 +6,14 @@ import java.lang.annotation.*;
 
 /**
  * 是否启用全局异常处理
- *
- * @author maiaimei
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-        // GlobalErrorConfig.class,
+        GlobalErrorProperties.class,
         GlobalErrorController.class,
         GlobalExceptionHandler.class
 })
 public @interface EnableGlobalException {
-    // boolean isShowTrace() default false;
 }

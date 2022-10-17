@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class CustomRequestWrapper extends HttpServletRequestWrapper {
+public class RequestWrapper extends HttpServletRequestWrapper {
     private Map<String, String> headers = new HashMap<>();
     private final byte[] bytes;
 
-    public CustomRequestWrapper(HttpServletRequest request) throws IOException {
+    public RequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         bytes = IOUtils.toByteArray(request.getInputStream());
     }

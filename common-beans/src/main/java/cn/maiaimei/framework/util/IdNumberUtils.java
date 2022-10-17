@@ -42,6 +42,7 @@ public class IdNumberUtils {
     private static final String SEX_FEMALE = "F";
 
     private IdNumberUtils() {
+        throw new UnsupportedOperationException();
     }
 
     private static int getValidBirthYear(LocalDate localDate) {

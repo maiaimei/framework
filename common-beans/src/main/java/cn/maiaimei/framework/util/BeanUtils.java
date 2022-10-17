@@ -1,5 +1,6 @@
 package cn.maiaimei.framework.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.FatalBeanException;
 
@@ -7,14 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BeanUtils extends org.springframework.beans.BeanUtils {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    static {
+        // 忽略未知属性
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     public static <T> T copyProperties(Object source, Class<T> targetClass) {
         try {
             Class<?> clazz = Class.forName(targetClass.getName());
             Object target = clazz.getConstructor().newInstance();
             org.springframework.beans.BeanUtils.copyProperties(source, target);
-            return objectMapper.convertValue(target, targetClass);
+            return OBJECT_MAPPER.convertValue(target, targetClass);
         } catch (Exception ex) {
             throw new FatalBeanException("Could not copy property from source to target", ex);
         }
@@ -25,11 +31,11 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
             List<T> targetList = new ArrayList<>();
             if (null != sourceList && sourceList.size() > 0) {
                 Class<?> clazz = Class.forName(targetClass.getName());
-                sourceList.stream().forEach(source -> {
+                sourceList.forEach(source -> {
                     try {
                         Object target = clazz.getConstructor().newInstance();
                         org.springframework.beans.BeanUtils.copyProperties(source, target);
-                        targetList.add(objectMapper.convertValue(target, targetClass));
+                        targetList.add(OBJECT_MAPPER.convertValue(target, targetClass));
                     } catch (Exception ex) {
                         throw new FatalBeanException("Could not copy property from source list to target list", ex);
                     }
@@ -39,5 +45,9 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
         } catch (Exception ex) {
             throw new FatalBeanException("Could not copy property from source list to target list", ex);
         }
+    }
+
+    private BeanUtils() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -12,7 +12,7 @@ public class RegexUtils {
     private static final String REGEX_PASSWORD_CONTAIN_ALPHABET_NUMBER_SYMBOL = "^(?![0-9]+$)(?![a-zA-Z]+$)(?![0-9a-zA-Z]+$)(?![0-9\\W]+$)(?![a-zA-Z\\W]+$)[0-9A-Za-z\\W]{%s,%s}$";
 
     private RegexUtils() {
-
+        throw new UnsupportedOperationException();
     }
 
     public static boolean isValidAlphabet(String value) {
