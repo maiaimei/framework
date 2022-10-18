@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
 
 public class PageUtils {
-    public static <T> PagingResult generate(Page page, Class<T> targetClass) {
+    public static <S, T> PagingResult<T> generate(Page<S> page, Class<T> targetClass) {
         List<T> records = BeanUtils.copyList(page.getRecords(), targetClass);
         PagingResult<T> pagingResult = new PagingResult<>();
         pagingResult.setRecords(records);
