@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PagingResult<T> {
+public class PaginationResult<T> {
     protected List<T> records;
     protected long total;
     protected long current;

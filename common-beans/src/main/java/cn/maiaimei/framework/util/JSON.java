@@ -3,6 +3,8 @@ package cn.maiaimei.framework.util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -11,26 +13,30 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public final class JSON {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static {
         // 忽略未知属性
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // java.lang.IllegalArgumentException: Java 8 date/time type `java.time.LocalDateTime` not supported by default
+        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
     @SneakyThrows
     public static <T> String stringify(T value) {
-        return objectMapper.writeValueAsString(value);
+        return OBJECT_MAPPER.writeValueAsString(value);
     }
 
     @SneakyThrows
     public static <T> T parse(String value, Class<T> clazz) {
-        return objectMapper.readValue(value, clazz);
+        return OBJECT_MAPPER.readValue(value, clazz);
     }
 
     @SneakyThrows
     public static <T> T parse(String value, TypeReference<T> valueTypeRef) {
-        return objectMapper.readValue(value, valueTypeRef);
+        return OBJECT_MAPPER.readValue(value, valueTypeRef);
     }
 
     @SneakyThrows
@@ -48,7 +54,7 @@ public final class JSON {
         ClassPathResource classPathResource = new ClassPathResource(path);
         if (classPathResource.exists()) {
             InputStream inputStream = classPathResource.getInputStream();
-            return objectMapper.readValue(inputStream, clazz);
+            return OBJECT_MAPPER.readValue(inputStream, clazz);
         }
         return null;
     }
@@ -58,7 +64,7 @@ public final class JSON {
         ClassPathResource classPathResource = new ClassPathResource(path);
         if (classPathResource.exists()) {
             InputStream inputStream = classPathResource.getInputStream();
-            return objectMapper.readValue(inputStream, valueTypeRef);
+            return OBJECT_MAPPER.readValue(inputStream, valueTypeRef);
         }
         return null;
     }

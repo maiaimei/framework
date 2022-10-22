@@ -2,6 +2,8 @@ package cn.maiaimei.framework.util;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.FatalBeanException;
 
 import java.util.ArrayList;
@@ -13,6 +15,10 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
     static {
         // 忽略未知属性
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // java.lang.IllegalArgumentException: Java 8 date/time type `java.time.LocalDateTime` not supported by default
+        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
     }
 
     public static <T> T copyProperties(Object source, Class<T> targetClass) {
