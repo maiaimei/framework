@@ -26,7 +26,7 @@ import java.util.Map;
 @Controller
 public class GlobalErrorController extends BasicErrorController {
     @Resource
-    private GlobalErrorProperties globalErrorProperties;
+    private ResponseProperties responseProperties;
 
     @Autowired
     public GlobalErrorController(ServerProperties errorAttributes) {
@@ -65,7 +65,7 @@ public class GlobalErrorController extends BasicErrorController {
         model.put("code", status.value());
         model.put("message", errorAttributes.get("message"));
         model.put("traceId", MDCUtils.getTraceId());
-        model.put("trace", globalErrorProperties.isShowTrace() ? trace : StringUtils.EMPTY);
+        model.put("trace", responseProperties.isShowTrace() ? trace : StringUtils.EMPTY);
         model.put("path", errorAttributes.get("path"));
         return model;
     }

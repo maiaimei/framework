@@ -37,7 +37,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @Resource
-    private GlobalErrorProperties globalErrorProperties;
+    private ResponseProperties responseProperties;
 
     @ExceptionHandler(BusinessException.class)
     public Object handleBusinessException(HttpServletRequest request, HandlerMethod handlerMethod, BusinessException e) {
@@ -149,7 +149,7 @@ public class GlobalExceptionHandler {
         if (isWriteLog && StringUtils.isNotBlank(trace)) {
             log.error("{}", trace);
         }
-        if (!globalErrorProperties.isShowTrace()) {
+        if (!responseProperties.isShowTrace()) {
             trace = StringUtils.EMPTY;
         }
 

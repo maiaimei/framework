@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-        GlobalErrorProperties.class,
+        ResponseProperties.class,
         GlobalErrorController.class,
         GlobalExceptionHandler.class
 })

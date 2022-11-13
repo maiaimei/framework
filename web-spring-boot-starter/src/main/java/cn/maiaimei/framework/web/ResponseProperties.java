@@ -4,8 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "global-error")
-public class GlobalErrorProperties {
+@ConfigurationProperties(prefix = "response")
+public class ResponseProperties {
     private boolean showTrace;
 
     public void setShowTrace(boolean showTrace) {
