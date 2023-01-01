@@ -11,13 +11,18 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <spring-boot.version>2.7.3</spring-boot.version>
+        <lombok.version>1.18.24</lombok.version>
+        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+        <swagger.version>1.5.22</swagger.version>
     </properties>
 
     <dependencies>
+        <!-- swagger begin -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+            <version>${springfox-boot-starter.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.swagger</groupId>
@@ -32,36 +37,34 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.5.22</version>
+            <version>${swagger.version}</version>
         </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
-            <version>1.5.22</version>
+            <version>${swagger.version}</version>
         </dependency>
-
+        <!-- swagger end -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot</artifactId>
-            <version>2.7.2</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.7.2</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.6.3</version>
+            <version>${spring-boot.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

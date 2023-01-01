@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.web.http;
+package cn.maiaimei.framework.web.servlet;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

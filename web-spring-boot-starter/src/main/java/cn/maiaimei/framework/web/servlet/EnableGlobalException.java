@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.web;
+package cn.maiaimei.framework.web.servlet;
 
 import org.springframework.context.annotation.Import;
 

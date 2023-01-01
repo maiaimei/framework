@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.web;
+package cn.maiaimei.framework.web.servlet;
 
 import cn.maiaimei.framework.beans.Result;
 import cn.maiaimei.framework.beans.ResultUtils;

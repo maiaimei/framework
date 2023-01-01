@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.web.http;
+package cn.maiaimei.framework.web.servlet;
 
 import ch.qos.logback.classic.helpers.MDCInsertingServletFilter;
 import cn.maiaimei.framework.util.MDCUtils;

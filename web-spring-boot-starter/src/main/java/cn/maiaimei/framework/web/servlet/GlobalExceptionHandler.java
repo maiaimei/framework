@@ -1,9 +1,8 @@
-package cn.maiaimei.framework.web;
+package cn.maiaimei.framework.web.servlet;
 
 import cn.maiaimei.framework.beans.Result;
 import cn.maiaimei.framework.exception.BusinessException;
 import cn.maiaimei.framework.util.MDCUtils;
-import cn.maiaimei.framework.web.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;

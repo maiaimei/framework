@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.web.http;
+package cn.maiaimei.framework.web.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.bitwalker.useragentutils.UserAgent;

@@ -1,8 +1,8 @@
 package cn.maiaimei.framework.swagger;
 
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -15,8 +15,11 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 @ConditionalOnProperty(value = "swagger.enabled", havingValue = "true", matchIfMissing = false)
 public class SwaggerConfig {
-    @Autowired
-    private SwaggerConfigProperties swaggerConfigProperties;
+    @Bean
+    @ConfigurationProperties(prefix = "swagger")
+    public SwaggerProperties swaggerProperties() {
+        return new SwaggerProperties();
+    }
 
     @Bean
     public Docket docket() {
@@ -25,14 +28,15 @@ public class SwaggerConfig {
                 //.apis(RequestHandlerSelectors.any())
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
                 .paths(PathSelectors.any()).build()
-                .enable(swaggerConfigProperties.getEnabled());
+                .enable(swaggerProperties().getEnabled());
     }
 
     private ApiInfo apiInfo() {
+        SwaggerProperties swaggerProperties = swaggerProperties();
         return new ApiInfoBuilder()
-                .title(swaggerConfigProperties.getTitle())
-                .description(swaggerConfigProperties.getDescription())
-                .version(swaggerConfigProperties.getVersion())
+                .title(swaggerProperties.getTitle())
+                .description(swaggerProperties.getDescription())
+                .version(swaggerProperties.getVersion())
                 .build();
     }
 }

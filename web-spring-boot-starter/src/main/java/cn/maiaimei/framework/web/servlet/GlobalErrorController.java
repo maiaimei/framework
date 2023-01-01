@@ -1,4 +1,4 @@
-package cn.maiaimei.framework.web;
+package cn.maiaimei.framework.web.servlet;
 
 import cn.maiaimei.framework.util.MDCUtils;
 import lombok.extern.slf4j.Slf4j;

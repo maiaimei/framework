@@ -11,7 +11,13 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <spring-boot.version>2.6.3</spring-boot.version>
+        <spring-boot.version>2.7.3</spring-boot.version>
+        <javax.inject.version>1</javax.inject.version>
+        <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
+        <cmf-mybatis-plus-spring-boot-starter.version>1.0-SNAPSHOT</cmf-mybatis-plus-spring-boot-starter.version>
+        <cmf-swagger-spring-boot-starter.version>1.0-SNAPSHOT</cmf-swagger-spring-boot-starter.version>
+        <cmf-validation-spring-boot-starter.version>1.0-SNAPSHOT</cmf-validation-spring-boot-starter.version>
+        <cmf-web-spring-boot-starter.version>1.0-SNAPSHOT</cmf-web-spring-boot-starter.version>
     </properties>
 
     <dependencyManagement>
@@ -19,27 +25,32 @@
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>web-spring-boot-starter</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${cmf-web-spring-boot-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.maiaimei.framework</groupId>
+                <artifactId>validation-spring-boot-starter</artifactId>
+                <version>${cmf-validation-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>swagger-spring-boot-starter</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${cmf-swagger-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>mybatis-plus-spring-boot-starter</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${cmf-mybatis-plus-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>2.2.2</version>
+                <version>${mybatis-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
-                <version>1</version>
+                <version>${javax.inject.version}</version>
             </dependency>
             <dependency>
                 <!-- Import dependency management from Spring Boot -->
