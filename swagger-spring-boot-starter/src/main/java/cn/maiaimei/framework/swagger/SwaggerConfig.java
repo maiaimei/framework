@@ -1,6 +1,5 @@
 package cn.maiaimei.framework.swagger;
 
-import io.swagger.annotations.Api;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo())
                 .select()
                 //.apis(RequestHandlerSelectors.any())
-                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                //.apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                .apis(RequestHandlerSelectors.basePackage(swaggerProperties().getBasePackage()))
                 .paths(PathSelectors.any()).build()
                 .enable(swaggerProperties().getEnabled());
     }

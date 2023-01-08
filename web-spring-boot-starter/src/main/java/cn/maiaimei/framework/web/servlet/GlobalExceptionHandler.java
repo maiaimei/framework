@@ -104,7 +104,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class})
     public Object handleMethodArgumentNotValidExceptionOrBindException(HttpServletRequest request, HandlerMethod handlerMethod, Exception e) {
-        BindingResult bindingResult = null;
+        BindingResult bindingResult;
         if (e instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;
             bindingResult = ex.getBindingResult();
@@ -116,9 +116,13 @@ public class GlobalExceptionHandler {
         List<ObjectError> errors = bindingResult.getAllErrors();
         errors.forEach(error -> {
             if (error instanceof FieldError) {
-                stringBuilder.append(((FieldError) error).getField()).append(": ");
+                stringBuilder.append(((FieldError) error).getField()).append(" ");
             }
-            stringBuilder.append(error.getDefaultMessage()).append(", ");
+            stringBuilder.append(error.getDefaultMessage());
+            if (error instanceof FieldError) {
+                stringBuilder.append(", invalid value: ").append(((FieldError) error).getRejectedValue());
+            }
+            stringBuilder.append("; ");
         });
         String message = stringBuilder.toString();
         message = StringUtils.substring(message, 0, message.length() - 2);
