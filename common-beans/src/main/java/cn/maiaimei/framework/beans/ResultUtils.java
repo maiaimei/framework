@@ -29,17 +29,17 @@ public class ResultUtils {
                 .build();
     }
 
-    public static Result error(String message) {
-        return Result.builder()
-                .code(ResultStatus.INTERNAL_SERVER_ERROR.value().toString())
-                .message(message)
-                .build();
+    public static ErrorResult error(String message) {
+        final ErrorResult<Object> result = new ErrorResult<>();
+        result.setCode(ResultStatus.INTERNAL_SERVER_ERROR.value().toString());
+        result.setMessage(message);
+        return result;
     }
 
-    public static Result error(String code, String message) {
-        return Result.builder()
-                .code(code)
-                .message(message)
-                .build();
+    public static ErrorResult error(String code, String message) {
+        final ErrorResult<Object> result = new ErrorResult<>();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
     }
 }

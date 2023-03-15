@@ -1,6 +1,6 @@
 package cn.maiaimei.framework.web.servlet;
 
-import cn.maiaimei.framework.beans.Result;
+import cn.maiaimei.framework.beans.ErrorResult;
 import cn.maiaimei.framework.exception.BusinessException;
 import cn.maiaimei.framework.util.MDCUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -157,13 +157,12 @@ public class GlobalExceptionHandler {
         }
 
         if (HttpUtils.isAjaxRequest(request) || HttpUtils.isReturnJson(request, handlerMethod)) {
-            Result<Object> result = Result.builder()
-                    .code(String.valueOf(code))
-                    .message(message)
-                    .traceId(traceId)
-                    .trace(trace)
-                    .path(path)
-                    .build();
+            final ErrorResult<Object> result = new ErrorResult<>();
+            result.setCode(String.valueOf(code));
+            result.setMessage(message);
+            result.setTraceId(traceId);
+            result.setTrace(trace);
+            result.setPath(path);
             return new ResponseEntity<>(result, status);
         } else {
             Map<String, Object> model = new LinkedHashMap<>();

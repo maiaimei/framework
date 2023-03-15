@@ -3,7 +3,6 @@ package cn.maiaimei.framework.swagger;
 import io.swagger.annotations.Api;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -15,8 +14,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.function.Predicate;
 
-@Configuration
-public class SwaggerConfig {
+public class SwaggerAutoConfiguration {
 
     @Bean
     @ConfigurationProperties(prefix = "swagger")
@@ -46,5 +44,5 @@ public class SwaggerConfig {
                 .version(swaggerProperties.getVersion())
                 .build();
     }
-    
+
 }

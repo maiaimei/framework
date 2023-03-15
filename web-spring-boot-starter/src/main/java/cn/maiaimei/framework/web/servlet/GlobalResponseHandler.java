@@ -4,7 +4,6 @@ import cn.maiaimei.framework.beans.Result;
 import cn.maiaimei.framework.beans.ResultUtils;
 import cn.maiaimei.framework.exception.TooManyAnnotationException;
 import cn.maiaimei.framework.util.JSON;
-import cn.maiaimei.framework.util.MDCUtils;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -72,20 +71,14 @@ public class GlobalResponseHandler implements ApplicationContextAware, Initializ
             return body;
         }
         if (body == null) {
-            return getResult(ResultUtils.success());
+            return ResultUtils.success();
         }
         if (body instanceof String) {
-            return JSON.stringify(getResult(ResultUtils.success(body)));
+            return JSON.stringify(ResultUtils.success(body));
         }
         if (body instanceof Result) {
-            return getResult((Result) body);
+            return body;
         }
-        return getResult(ResultUtils.success(body));
-    }
-
-    private Result getResult(Result result) {
-        String requestId = MDCUtils.getTraceId();
-        result.setTraceId(requestId);
-        return result;
+        return ResultUtils.success(body);
     }
 }
