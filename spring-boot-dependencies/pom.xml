@@ -14,10 +14,10 @@
         <spring-boot.version>2.7.3</spring-boot.version>
         <javax.inject.version>1</javax.inject.version>
         <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
-        <cmf-mybatis-plus-spring-boot-starter.version>1.0-SNAPSHOT</cmf-mybatis-plus-spring-boot-starter.version>
-        <cmf-swagger-spring-boot-starter.version>1.0-SNAPSHOT</cmf-swagger-spring-boot-starter.version>
-        <cmf-validation-spring-boot-starter.version>1.0-SNAPSHOT</cmf-validation-spring-boot-starter.version>
-        <cmf-web-spring-boot-starter.version>1.0-SNAPSHOT</cmf-web-spring-boot-starter.version>
+        <web-spring-boot-starter.version>1.0-SNAPSHOT</web-spring-boot-starter.version>
+        <validation-spring-boot-starter.version>1.0-SNAPSHOT</validation-spring-boot-starter.version>
+        <swagger-spring-boot-starter.version>1.0-SNAPSHOT</swagger-spring-boot-starter.version>
+        <mybatis-plus-spring-boot-starter.version>1.0-SNAPSHOT</mybatis-plus-spring-boot-starter.version>
     </properties>
 
     <dependencyManagement>
@@ -25,22 +25,22 @@
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>web-spring-boot-starter</artifactId>
-                <version>${cmf-web-spring-boot-starter.version}</version>
+                <version>${web-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>validation-spring-boot-starter</artifactId>
-                <version>${cmf-validation-spring-boot-starter.version}</version>
+                <version>${validation-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>swagger-spring-boot-starter</artifactId>
-                <version>${cmf-swagger-spring-boot-starter.version}</version>
+                <version>${swagger-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.maiaimei.framework</groupId>
                 <artifactId>mybatis-plus-spring-boot-starter</artifactId>
-                <version>${cmf-mybatis-plus-spring-boot-starter.version}</version>
+                <version>${mybatis-plus-spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
