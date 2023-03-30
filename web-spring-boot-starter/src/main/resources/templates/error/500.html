@@ -24,6 +24,9 @@
     <p>服务器出错啦，请与管理员联系！</p>
 </div>
 <div class="text-left" style="margin: auto;width: 80vh;">
+    <p th:if="${source} != null or ${source} != null">
+        来源：<span th:text="${source}"></span><span th:text="${source}"></span>
+    </p>
     <p th:if="${statusCode} != null or ${status} != null">
         状态码：<span th:text="${statusCode}"></span><span th:text="${status}"></span>
     </p>

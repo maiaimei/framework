@@ -4,10 +4,11 @@ import ch.qos.logback.classic.helpers.MDCInsertingServletFilter;
 import cn.maiaimei.framework.util.MDCUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import org.springframework.web.util.NestedServletException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpFilter;
@@ -26,12 +27,31 @@ import java.util.UUID;
  */
 @Slf4j
 public class RequestResponseLoggingFilter extends HttpFilter {
+
+    private List<String> excludeUriList;
+
+    @Override
+    public void init() {
+        excludeUriList = new ArrayList<>();
+        excludeUriList.add("/favicon.ico");
+        excludeUriList.add("/error");
+        // swagger
+        excludeUriList.add("/v2/api-docs");
+        excludeUriList.add("/v3/api-docs");
+        excludeUriList.add("/swagger-resources");
+        excludeUriList.add("/swagger-resources/configuration/ui");
+        excludeUriList.add("/swagger-resources/configuration/security");
+        if (!CollectionUtils.isEmpty(excludeUris)) {
+            excludeUriList.addAll(excludeUris);
+        }
+    }
+
     @SneakyThrows
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         boolean ignoreFilter = checkUri(request) || isMultipartFormData(request, response);
         if (ignoreFilter) {
-            super.doFilter(request, response, chain);
+            chain.doFilter(request, response);
             return;
         }
 
@@ -39,23 +59,16 @@ public class RequestResponseLoggingFilter extends HttpFilter {
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
         RequestResponseDetail rrd = HttpUtils.getRequestResponseDetail(requestWrapper, excludeHeaderNames);
         long start = 0, end = 0;
+        final String source = request.getHeader("source");
 
         try {
-            MDCUtils.setTraceId(UUID.randomUUID().toString().replaceAll("-", ""));
+            if (StringUtils.isNotBlank(source)) {
+                MDCUtils.setSource(source);
+            }
+            MDCUtils.setTraceId(UUID.randomUUID().toString().replace("-", ""));
 
             start = System.currentTimeMillis();
-            try {
-                // 执行请求链
-                super.doFilter(requestWrapper, responseWrapper, chain);
-            } catch (NestedServletException e) {
-                Throwable cause = e.getCause();
-                // 请求体超过限制，以文本形式给客户端响应异常信息提示
-                if (cause instanceof PayloadTooLargeException) {
-                    throw cause;
-                } else {
-                    throw new RuntimeException(e);
-                }
-            }
+            chain.doFilter(requestWrapper, responseWrapper);
             end = System.currentTimeMillis();
 
             rrd.setResponseBody(new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8));
@@ -81,6 +94,9 @@ public class RequestResponseLoggingFilter extends HttpFilter {
             log.info("\n{}\ncompleted request in {} ms", String.join("\n", list), end - start);
 
             MDCUtils.removeTraceId();
+            if (StringUtils.isBlank(source)) {
+                MDCUtils.removeSource();
+            }
         }
     }
 
@@ -116,18 +132,14 @@ public class RequestResponseLoggingFilter extends HttpFilter {
     }
 
     private boolean checkUri(HttpServletRequest request) {
-        List<String> uris = new ArrayList<>();
-        uris.add("/favicon.ico");
-        uris.add("/swagger");
-        if (null != excludeUris && excludeUris.size() > 0) {
-            uris.addAll(excludeUris);
-        }
-        return uris.stream().anyMatch(uri -> request.getRequestURI().startsWith(uri));
+        final String contextPath = StringUtils.defaultIfBlank(request.getContextPath(), StringUtils.EMPTY);
+        final String requestURI = request.getRequestURI();
+        return excludeUriList.stream().anyMatch(uri -> contextPath.concat(requestURI).equals(uri));
     }
 
     private boolean isMultipartFormData(HttpServletRequest request, HttpServletResponse response) {
-        return (request.getContentType() != null && request.getContentType().equals(MediaType.MULTIPART_FORM_DATA_VALUE)) ||
-                (response.getContentType() != null && response.getContentType().equals(MediaType.APPLICATION_OCTET_STREAM_VALUE));
+        return StringUtils.equalsIgnoreCase(request.getContentType(), MediaType.MULTIPART_FORM_DATA_VALUE) ||
+                StringUtils.equalsIgnoreCase(response.getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
     }
 
     private String formatLog(String key, String value) {
@@ -135,22 +147,10 @@ public class RequestResponseLoggingFilter extends HttpFilter {
     }
 
     static class LoggingList<E> extends ArrayList<E> {
-        public boolean add(boolean condition, E e) {
+        public void add(boolean condition, E e) {
             if (condition) {
-                return super.add(e);
+                super.add(e);
             }
-            return Boolean.FALSE;
-        }
-    }
-
-    @SuppressWarnings("unused")
-    static class PayloadTooLargeException extends RuntimeException {
-        private static final long serialVersionUID = 660133056518301142L;
-        private final int maxBodySize;
-
-        public PayloadTooLargeException(int maxBodySize) {
-            super();
-            this.maxBodySize = maxBodySize;
         }
     }
 }

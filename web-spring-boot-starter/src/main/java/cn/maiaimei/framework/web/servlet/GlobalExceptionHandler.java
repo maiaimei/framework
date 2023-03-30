@@ -16,6 +16,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
@@ -86,7 +88,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public Object handleConstraintViolationException(HttpServletRequest request, HandlerMethod handlerMethod, ConstraintViolationException e) {
         String message = e.getMessage();
-        message = message.replaceAll(handlerMethod.getMethod().getName() + ".", "");
+        message = message.replace(handlerMethod.getMethod().getName() + ".", "");
         return handleError(HttpStatus.BAD_REQUEST, message, request, handlerMethod, e);
     }
 
@@ -144,7 +146,16 @@ public class GlobalExceptionHandler {
     }
 
     private Object handleError(HttpStatus status, String message, HttpServletRequest request, HandlerMethod handlerMethod, Throwable error, Boolean isWriteLog) {
+        if (HttpClientErrorException.class.isAssignableFrom(error.getClass())) {
+            final HttpClientErrorException httpClientErrorException = (HttpClientErrorException) error;
+            status = httpClientErrorException.getStatusCode();
+        } else if (HttpServerErrorException.class.isAssignableFrom(error.getClass())) {
+            final HttpServerErrorException httpServerErrorException = (HttpServerErrorException) error;
+            status = httpServerErrorException.getStatusCode();
+        }
+
         int code = status.value();
+        final String source = MDCUtils.getSource();
         String traceId = MDCUtils.getTraceId();
         String trace = getTrace(error);
         String path = HttpUtils.getRequestMethodAndUri(request);
@@ -158,6 +169,7 @@ public class GlobalExceptionHandler {
 
         if (HttpUtils.isAjaxRequest(request) || HttpUtils.isReturnJson(request, handlerMethod)) {
             final ErrorResult<Object> result = new ErrorResult<>();
+            result.setSource(source);
             result.setCode(String.valueOf(code));
             result.setMessage(message);
             result.setTraceId(traceId);
@@ -166,6 +178,7 @@ public class GlobalExceptionHandler {
             return new ResponseEntity<>(result, status);
         } else {
             Map<String, Object> model = new LinkedHashMap<>();
+            model.put("source", source);
             model.put("code", code);
             model.put("message", message);
             model.put("traceId", traceId);
