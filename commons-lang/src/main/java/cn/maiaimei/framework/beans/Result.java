@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Result<T> {
-    private String code;
+    private Integer code;
     private String message;
     private T data;
     private String source;

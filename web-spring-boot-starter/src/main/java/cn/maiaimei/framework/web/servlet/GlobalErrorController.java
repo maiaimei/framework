@@ -4,6 +4,7 @@ import cn.maiaimei.framework.util.MDCUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
@@ -24,8 +24,9 @@ import java.util.Map;
  */
 @Slf4j
 @Controller
+@ConditionalOnWebApplication
 public class GlobalErrorController extends BasicErrorController {
-    @Resource
+    @Autowired
     private ResponseProperties responseProperties;
 
     @Autowired

@@ -7,6 +7,7 @@ import cn.maiaimei.framework.util.JSON;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodParameter;
@@ -25,6 +26,7 @@ import java.util.Map;
  * 接口返回值统一处理
  */
 @ControllerAdvice
+@ConditionalOnWebApplication
 public class GlobalResponseHandler implements ApplicationContextAware, InitializingBean, ResponseBodyAdvice<Object> {
     private String[] basePackages;
 

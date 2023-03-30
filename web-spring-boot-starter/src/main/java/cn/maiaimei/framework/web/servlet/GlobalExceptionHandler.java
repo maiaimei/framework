@@ -5,6 +5,7 @@ import cn.maiaimei.framework.exception.BusinessException;
 import cn.maiaimei.framework.util.MDCUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -36,6 +37,7 @@ import java.util.Map;
  */
 @Slf4j
 @ControllerAdvice
+@ConditionalOnWebApplication
 public class GlobalExceptionHandler {
     @Resource
     private ResponseProperties responseProperties;
@@ -136,6 +138,16 @@ public class GlobalExceptionHandler {
         return handleError(HttpStatus.BAD_REQUEST, e.getMessage(), request, handlerMethod, e);
     }
 
+    @ExceptionHandler(HttpClientErrorException.class)
+    public Object handleHttpClientErrorException(HttpServletRequest request, HandlerMethod handlerMethod, HttpClientErrorException e) {
+        return handleError(e.getStatusCode(), e.getMessage(), request, handlerMethod, e, true);
+    }
+
+    @ExceptionHandler(HttpServerErrorException.class)
+    public Object handleHttpServerErrorException(HttpServletRequest request, HandlerMethod handlerMethod, HttpServerErrorException e) {
+        return handleError(e.getStatusCode(), e.getMessage(), request, handlerMethod, e, true);
+    }
+
     @ExceptionHandler(Throwable.class)
     public Object handleThrowable(HttpServletRequest request, HandlerMethod handlerMethod, Throwable e) {
         return handleError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), request, handlerMethod, e, true);
@@ -146,14 +158,6 @@ public class GlobalExceptionHandler {
     }
 
     private Object handleError(HttpStatus status, String message, HttpServletRequest request, HandlerMethod handlerMethod, Throwable error, Boolean isWriteLog) {
-        if (HttpClientErrorException.class.isAssignableFrom(error.getClass())) {
-            final HttpClientErrorException httpClientErrorException = (HttpClientErrorException) error;
-            status = httpClientErrorException.getStatusCode();
-        } else if (HttpServerErrorException.class.isAssignableFrom(error.getClass())) {
-            final HttpServerErrorException httpServerErrorException = (HttpServerErrorException) error;
-            status = httpServerErrorException.getStatusCode();
-        }
-
         int code = status.value();
         final String source = MDCUtils.getSource();
         String traceId = MDCUtils.getTraceId();
@@ -170,7 +174,7 @@ public class GlobalExceptionHandler {
         if (HttpUtils.isAjaxRequest(request) || HttpUtils.isReturnJson(request, handlerMethod)) {
             final ErrorResult<Object> result = new ErrorResult<>();
             result.setSource(source);
-            result.setCode(String.valueOf(code));
+            result.setCode(code);
             result.setMessage(message);
             result.setTraceId(traceId);
             result.setTrace(trace);

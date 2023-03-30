@@ -1,10 +1,12 @@
 package cn.maiaimei.framework.web.servlet;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "response")
+@ConditionalOnWebApplication
 public class ResponseProperties {
     private boolean showTrace;
 
