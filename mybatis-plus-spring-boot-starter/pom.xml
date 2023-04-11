@@ -11,8 +11,8 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
         <commons-lang.version>1.0-SNAPSHOT</commons-lang.version>
-        <mybatis-plus-boot-starter.version>3.5.1</mybatis-plus-boot-starter.version>
     </properties>
 
     <dependencies>
