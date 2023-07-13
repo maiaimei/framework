@@ -1,24 +1,29 @@
 package cn.maiaimei.framework.validation.constraints;
 
-import cn.maiaimei.framework.validation.constraints.validator.DateValidator;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE_USE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
+import cn.maiaimei.framework.validation.constraintvalidators.DateValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 @Documented
 @Constraint(validatedBy = {DateValidator.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 public @interface Date {
-    String message() default "{cn.maiaimei.framework.validation.constraints.Date.message}";
 
-    Class<?>[] groups() default {};
+  String message() default "{cn.maiaimei.framework.validation.constraints.Date.message}";
 
-    Class<? extends Payload>[] payload() default {};
+  Class<?>[] groups() default {};
+
+  Class<? extends Payload>[] payload() default {};
 }
