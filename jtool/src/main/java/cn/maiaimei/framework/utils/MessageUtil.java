@@ -3,7 +3,9 @@ package cn.maiaimei.framework.utils;
 import com.google.common.collect.ImmutableMap;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import org.apache.commons.lang3.StringUtils;
 
 public class MessageUtil {
 
@@ -63,8 +65,19 @@ public class MessageUtil {
     return MessageFormat.format(template, data);
   }
 
-  public static String get(String baseName, String key) {
-    return getBundle(baseName).getString(key);
+  public static String get(String baseName, String key, String defaultValue) {
+    return get(getBundle(baseName), key, defaultValue);
+  }
+
+  public static String get(ResourceBundle bundle, String key, String defaultValue) {
+    if (Objects.isNull(bundle)) {
+      return defaultValue;
+    }
+    final String result = bundle.getString(key);
+    if (StringUtils.isBlank(result)) {
+      return defaultValue;
+    }
+    return result;
   }
 
   public static ResourceBundle getBundle(String baseName) {

@@ -1,0 +1,13 @@
+<segment name="ST" fullname="Transaction Set Header"
+  description="To indicate the start of a transaction set and to assign a control number">
+  <elements>
+    <element name="ST01" fullname="Transaction Set Identifier Code"
+      description="Code uniquely identifying a Transaction Set"
+      required="true" length="3"/>
+    <element name="ST02" fullname="Transaction Set Control Number"
+      description="Identifying control number that must be unique within the transaction set functional group assigned by the originator for a transaction set"
+      required="true" length="4,9"/>
+    <element name="ST03" fullname="Implementation Convention Preference"
+      length="1,9"/>
+  </elements>
+</segment>

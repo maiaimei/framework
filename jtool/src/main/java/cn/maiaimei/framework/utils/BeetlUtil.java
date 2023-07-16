@@ -46,7 +46,14 @@ public final class BeetlUtil {
     return t.render();
   }
 
-  public static void renderToFile(String path, String template, Map<String, Object> data) {
+  public static String renderByTemplatePath(String template, Map<String, Object> data) {
+    final Template t = CLASSPATH_RESOURCE_LOADER_GROUP_TEMPLATE.getTemplate(template);
+    t.binding(data);
+    return t.render();
+  }
+
+  public static void renderToFileByTemplatePath(String path, String template,
+      Map<String, Object> data) {
     final Template t = CLASSPATH_RESOURCE_LOADER_GROUP_TEMPLATE.getTemplate(template);
     t.binding(data);
     try (OutputStream os = Files.newOutputStream(Paths.get(path))) {
